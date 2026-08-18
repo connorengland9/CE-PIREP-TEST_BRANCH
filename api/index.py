@@ -24,6 +24,12 @@ AUX_AIRPORTS = [
     {"id": "PGWT", "name": "West Tinian"}
 ]
 
+# 🛑 AWC SECURITY HEADERS ADDED HERE TO FIX DATA BLOCK 🛑
+HEADERS = {
+    "User-Agent": "ZUA-CE-PIREP-Dashboard/1.0",
+    "Accept": "application/json"
+}
+
 # --- LOGIC HELPERS ---
 def get_cloud_base(layer):
     base = layer.get('base')
@@ -162,7 +168,8 @@ def fetch_awc_metars(ids):
     url = "https://www.aviationweather.gov/api/data/metar"
     params = { "ids": id_string, "format": "json", "taf": "false", "hours": 2, "_": int(time.time()) }
     try:
-        res = requests.get(url, params=params, timeout=4)
+        # Added headers=HEADERS here
+        res = requests.get(url, params=params, headers=HEADERS, timeout=4)
         if res.status_code == 200:
             return res.json()
     except Exception as e:
@@ -267,7 +274,8 @@ def fetch_awc_pireps():
     try:
         url = "https://www.aviationweather.gov/api/data/aircraftreport"
         params = { "format": "json", "bbox": "8.0,139.0,19.0,150.0", "age": 2, "_": int(time.time()) }
-        res = requests.get(url, params=params, timeout=4)
+        # Added headers=HEADERS here
+        res = requests.get(url, params=params, headers=HEADERS, timeout=4)
         if res.status_code == 200:
             raw = res.json()
             if isinstance(raw, list):
